@@ -88,6 +88,9 @@ export default function RouteEditorMap() {
   const [isLoadingRoute, setIsLoadingRoute] = useState(false);
   const [activeTab, setActiveTab] = useState("pois"); // 'pois', 'routing'
 
+  // State: Coordinates actively being drawn in manual mode before finishing
+  const [activeManualPoints, setActiveManualPoints] = useState([]);
+
   // Load draft from localStorage on mount
   useEffect(() => {
     const savedRoute = localStorage.getItem('taipo_route_draft_v3');
@@ -157,7 +160,7 @@ export default function RouteEditorMap() {
   function MapEventsHandler() {
     useMapEvents({
       click(e) {
-        // 1. Manual Path intermediate coordinate drawing mode
+        // 1. Manual Path intermediate coordinate drawing mode (editing an existing segment)
         if (activeSegmentIdxForManualDrawing !== null) {
           const idx = activeSegmentIdxForManualDrawing;
           if (idx >= segmentsPath.length) return;
@@ -180,9 +183,33 @@ export default function RouteEditorMap() {
         // 2. Normal POI waypoint addition mode
         if (!isDrawMode) return;
         
+        const clickedCoord = [e.latlng.lat, e.latlng.lng];
+
+        // If there are no waypoints yet, the first click MUST create the starting Attraction POI
+        if (waypoints.length === 0) {
+          const newWp = {
+            id: Date.now().toString(),
+            latlng: clickedCoord,
+            name: "導賞景點 1",
+            description: "請填寫此導賞站點的歷史故事、景觀特徵或導覽文字。",
+            audioUrl: "",
+            imageUrl: ""
+          };
+          setWaypoints([newWp]);
+          setActiveWaypointId(newWp.id);
+          return;
+        }
+
+        // If in global manual mode and there is a starting waypoint, click appends to active manual polyline
+        if (globalRoutingMode === 'manual') {
+          setActiveManualPoints(prev => [...prev, clickedCoord]);
+          return;
+        }
+
+        // Normal snap-to-road waypoint addition for foot/bike/car
         const newWp = {
           id: Date.now().toString(),
-          latlng: [e.latlng.lat, e.latlng.lng],
+          latlng: clickedCoord,
           name: `導賞景點 ${waypoints.length + 1}`,
           description: "請填寫此導賞站點的歷史故事、景觀特徵或導覽文字。",
           audioUrl: "",
@@ -199,17 +226,12 @@ export default function RouteEditorMap() {
           const newProfiles = [...segmentProfiles, newProfile];
           setSegmentProfiles(newProfiles);
 
-          if (newProfile === 'manual') {
-            // Direct straight line path for manual mode, completely ignoring routing rules and bypassing API
-            setSegmentsPath(prev => [...prev, [prevWaypoint.latlng, newWp.latlng]]);
-          } else {
-            setIsLoadingRoute(true);
-            // Fetch routing in background
-            fetchOSRMRoute(prevWaypoint.latlng, newWp.latlng, newProfile).then(path => {
-              setSegmentsPath(prev => [...prev, path]);
-              setIsLoadingRoute(false);
-            });
-          }
+          setIsLoadingRoute(true);
+          // Fetch routing in background
+          fetchOSRMRoute(prevWaypoint.latlng, newWp.latlng, newProfile).then(path => {
+            setSegmentsPath(prev => [...prev, path]);
+            setIsLoadingRoute(false);
+          });
         }
       }
     });
@@ -250,6 +272,35 @@ export default function RouteEditorMap() {
     setWaypoints(prev => prev.map(wp => 
       wp.id === id ? { ...wp, [field]: value } : wp
     ));
+  };
+
+  // Finish manual path and create a new waypoint at the end
+  const finishManualPath = () => {
+    if (activeManualPoints.length === 0) return;
+    const lastCoord = activeManualPoints[activeManualPoints.length - 1];
+    
+    const newWp = {
+      id: Date.now().toString(),
+      latlng: lastCoord,
+      name: `導賞景點 ${waypoints.length + 1}`,
+      description: "請填寫此導賞站點的歷史故事、景觀特徵或導覽文字。",
+      audioUrl: "",
+      imageUrl: ""
+    };
+    
+    const prevWaypoint = waypoints[waypoints.length - 1];
+    const newWaypoints = [...waypoints, newWp];
+    setWaypoints(newWaypoints);
+    setActiveWaypointId(newWp.id);
+    
+    if (prevWaypoint) {
+      setSegmentProfiles(prev => [...prev, 'manual']);
+      // Detailed path is start POI -> all clicked manual vertices
+      const detailedPath = [prevWaypoint.latlng, ...activeManualPoints];
+      setSegmentsPath(prev => [...prev, detailedPath]);
+    }
+    
+    setActiveManualPoints([]);
   };
 
   // Change specific segment profile
@@ -352,6 +403,7 @@ export default function RouteEditorMap() {
       setSegmentsPath([]);
       setActiveWaypointId(null);
       setActiveSegmentIdxForManualDrawing(null);
+      setActiveManualPoints([]);
       localStorage.removeItem('taipo_route_draft_v3');
     }
   };
@@ -489,6 +541,32 @@ export default function RouteEditorMap() {
               ))}
             </div>
           </div>
+
+          {/* Active Manual Path Drawing Card */}
+          {activeManualPoints.length > 0 && (
+            <div className="bg-pink-950/20 border border-pink-500/30 p-4 rounded-2xl space-y-3 animate-fade-in shadow-xl shadow-pink-950/10">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] text-pink-400 font-bold flex items-center gap-1.5 animate-pulse">
+                  🔴 正在點擊手動路徑 ({activeManualPoints.length} 個折點)
+                </span>
+                <button 
+                  onClick={() => setActiveManualPoints([])}
+                  className="text-[9px] text-slate-400 hover:text-slate-200 transition-colors underline"
+                >
+                  ❌ 放棄重畫
+                </button>
+              </div>
+              <p className="text-[10px] text-slate-400 leading-normal">
+                地圖上已繪製出粉紅虛線預覽。您可以連續點擊地圖增加折點，完成後請按下方按鈕以將「最後一個點」設為下一個導賞景點站。
+              </p>
+              <button
+                onClick={finishManualPath}
+                className="w-full py-2.5 px-3 bg-pink-600 hover:bg-pink-500 text-white rounded-xl text-xs font-bold shadow-md shadow-pink-500/20 transition-all flex items-center justify-center gap-1.5"
+              >
+                🏁 完成手動路徑並新增下一景點
+              </button>
+            </div>
+          )}
 
           {/* Double Tabs Selector */}
           <div className="flex border-b border-white/5">
@@ -848,6 +926,42 @@ export default function RouteEditorMap() {
           
           {/* Map click and manual draw listener */}
           <MapEventsHandler />
+
+          {/* Render active manual path preview */}
+          {activeManualPoints.length > 0 && waypoints.length > 0 && (
+            <>
+              <Polyline
+                positions={[waypoints[waypoints.length - 1].latlng, ...activeManualPoints]}
+                color="#f43f5e"
+                weight={5}
+                opacity={0.8}
+                dashArray="6, 8"
+              />
+              {activeManualPoints.map((coord, pIdx) => (
+                <CircleMarker
+                  key={`preview_manual_${pIdx}`}
+                  center={coord}
+                  radius={pIdx === activeManualPoints.length - 1 ? 6 : 4}
+                  fillColor="#f43f5e"
+                  color="#ffffff"
+                  weight={1.5}
+                  fillOpacity={0.9}
+                >
+                  <Popup>
+                    <div className="text-[10px] text-slate-800 p-0.5">
+                      📌 <strong>預定手動折線點 {pIdx + 1}</strong>
+                      {pIdx === activeManualPoints.length - 1 && (
+                        <>
+                          <br />
+                          🏁 <em>此為最後一點，按左側「完成」即可在此設為下一景點站</em>
+                        </>
+                      )}
+                    </div>
+                  </Popup>
+                </CircleMarker>
+              ))}
+            </>
+          )}
 
           {/* Render individual path segments */}
           {segmentsPath.map((path, idx) => {
