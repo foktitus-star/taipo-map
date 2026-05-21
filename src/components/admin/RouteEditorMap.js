@@ -236,11 +236,19 @@ export default function RouteEditorMap() {
           setSegmentProfiles(newProfiles);
 
           setIsLoadingRoute(true);
-          // Fetch routing in background
-          fetchOSRMRoute(prevWaypoint.latlng, newWp.latlng, newProfile).then(path => {
-            setSegmentsPath(prev => [...prev, path]);
-            setIsLoadingRoute(false);
-          });
+          // Fetch routing in background with error handling
+          (async () => {
+            try {
+              const path = await fetchOSRMRoute(prevWaypoint.latlng, newWp.latlng, newProfile);
+              setSegmentsPath(prev => [...prev, path]);
+            } catch (err) {
+              console.error('Routing fetch failed:', err);
+              // Fallback to direct line
+              setSegmentsPath(prev => [...prev, [prevWaypoint.latlng, newWp.latlng]]);
+            } finally {
+              setIsLoadingRoute(false);
+            }
+          })();
         }
       }
     });
@@ -444,22 +452,27 @@ export default function RouteEditorMap() {
 
     setIsLoadingRoute(true);
     let newPath;
-    if (newProfile === 'manual') {
-      newPath = [start, end]; // Direct straight line initially
-      setActiveSegmentIdxForManualDrawing(idx); // Automatically start manual click drawing
-    } else {
-      newPath = await fetchOSRMRoute(start, end, newProfile);
-      if (activeSegmentIdxForManualDrawing === idx) {
-        setActiveSegmentIdxForManualDrawing(null);
+    try {
+      if (newProfile === 'manual') {
+        newPath = [start, end]; // Direct straight line initially
+        setActiveSegmentIdxForManualDrawing(idx); // Automatically start manual click drawing
+      } else {
+        newPath = await fetchOSRMRoute(start, end, newProfile);
+        if (activeSegmentIdxForManualDrawing === idx) {
+          setActiveSegmentIdxForManualDrawing(null);
+        }
       }
+    } catch (err) {
+      console.error('Segment profile change routing failed:', err);
+      newPath = [start, end];
+    } finally {
+      setSegmentsPath(prev => {
+        const updated = [...prev];
+        updated[idx] = newPath;
+        return updated;
+      });
+      setIsLoadingRoute(false);
     }
-
-    setSegmentsPath(prev => {
-      const updated = [...prev];
-      updated[idx] = newPath;
-      return updated;
-    });
-    setIsLoadingRoute(false);
   };
 
   // Delete waypoint and restructure segments
@@ -488,41 +501,46 @@ export default function RouteEditorMap() {
     }
 
     setIsLoadingRoute(true);
-    const updatedProfiles = [...segmentProfiles];
-    const updatedPaths = [...segmentsPath];
+    try {
+      const updatedProfiles = [...segmentProfiles];
+      const updatedPaths = [...segmentsPath];
 
-    if (wpIdx === 0) {
-      // First waypoint deleted, remove first segment
-      updatedProfiles.splice(0, 1);
-      updatedPaths.splice(0, 1);
-    } else if (wpIdx === waypoints.length - 1) {
-      // Last waypoint deleted, remove last segment
-      updatedProfiles.splice(wpIdx - 1, 1);
-      updatedPaths.splice(wpIdx - 1, 1);
-    } else {
-      // Intermediate waypoint deleted: merge segment wpIdx-1 and wpIdx
-      const mergedProfile = updatedProfiles[wpIdx - 1]; // Keep preceding profile
-      updatedProfiles.splice(wpIdx - 1, 2, mergedProfile);
-      updatedPaths.splice(wpIdx - 1, 2);
-
-      // Re-calculate the merged path
-      let mergedPath;
-      if (mergedProfile === 'manual') {
-        mergedPath = [renamedWaypoints[wpIdx - 1].latlng, renamedWaypoints[wpIdx].latlng];
+      if (wpIdx === 0) {
+        // First waypoint deleted, remove first segment
+        updatedProfiles.splice(0, 1);
+        updatedPaths.splice(0, 1);
+      } else if (wpIdx === waypoints.length - 1) {
+        // Last waypoint deleted, remove last segment
+        updatedProfiles.splice(wpIdx - 1, 1);
+        updatedPaths.splice(wpIdx - 1, 1);
       } else {
-        mergedPath = await fetchOSRMRoute(
-          renamedWaypoints[wpIdx - 1].latlng,
-          renamedWaypoints[wpIdx].latlng,
-          mergedProfile
-        );
-      }
-      updatedPaths.splice(wpIdx - 1, 0, mergedPath);
-    }
+        // Intermediate waypoint deleted: merge segment wpIdx-1 and wpIdx
+        const mergedProfile = updatedProfiles[wpIdx - 1]; // Keep preceding profile
+        updatedProfiles.splice(wpIdx - 1, 2, mergedProfile);
+        updatedPaths.splice(wpIdx - 1, 2);
 
-    setSegmentProfiles(updatedProfiles);
-    setSegmentsPath(updatedPaths);
-    setActiveSegmentIdxForManualDrawing(null);
-    setIsLoadingRoute(false);
+        // Re-calculate the merged path
+        let mergedPath;
+        if (mergedProfile === 'manual') {
+          mergedPath = [renamedWaypoints[wpIdx - 1].latlng, renamedWaypoints[wpIdx].latlng];
+        } else {
+          mergedPath = await fetchOSRMRoute(
+            renamedWaypoints[wpIdx - 1].latlng,
+            renamedWaypoints[wpIdx].latlng,
+            mergedProfile
+          );
+        }
+        updatedPaths.splice(wpIdx - 1, 0, mergedPath);
+      }
+
+      setSegmentProfiles(updatedProfiles);
+      setSegmentsPath(updatedPaths);
+    } catch (err) {
+      console.error('Delete waypoint routing error:', err);
+    } finally {
+      setActiveSegmentIdxForManualDrawing(null);
+      setIsLoadingRoute(false);
+    }
   };
 
   // Clear all
@@ -1019,7 +1037,7 @@ export default function RouteEditorMap() {
           {isLoadingRoute && (
             <div className="flex items-center justify-center gap-2 py-1 text-xs text-blue-400">
               <div className="w-3.5 h-3.5 border-2 border-blue-400/20 border-t-blue-400 rounded-full animate-spin" />
-              <span>OSM 智慧路網動態規劃中...</span>
+              <span>資料載入中或路徑計算中...</span>
             </div>
           )}
           
