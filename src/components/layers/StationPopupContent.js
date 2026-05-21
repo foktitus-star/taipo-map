@@ -26,7 +26,9 @@ export default function StationPopupContent({ station, routeColor }) {
         {station.badge || station.id}
       </div>
       <h3 className="popup-title">{station.name}</h3>
-      <p className="popup-hook">{station.hook}</p>
+      {station.hook && station.hook !== station.body && (
+        <p className="popup-hook">{station.hook}</p>
+      )}
       {station.body && (
         <p className="popup-body">{station.body}</p>
       )}

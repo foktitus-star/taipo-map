@@ -5,6 +5,10 @@ import { MapContainer, TileLayer, Polyline, Marker, Popup, useMapEvents, CircleM
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
+// Firebase Firestore Imports
+import { db } from '@/lib/firebase';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+
 // Fix default Marker icon issues in Next.js
 const setupDefaultIcon = () => {
   if (typeof window !== 'undefined' && L.Icon.Default) {
@@ -64,6 +68,7 @@ const fetchOSRMRoute = async (start, end, profile) => {
 export default function RouteEditorMap() {
   const [routeName, setRouteName] = useState("大埔社區歷史導賞線");
   const [routeDescription, setRouteDescription] = useState("沿途步行探索林村河、文武廟、太和鐵路博物館等大埔經典文化地標。");
+  const [published, setPublished] = useState(true); // Default to true so saving publishes it immediately
   
   // State: Attractions (POIs)
   const [waypoints, setWaypoints] = useState([]);
@@ -91,6 +96,9 @@ export default function RouteEditorMap() {
   // State: Coordinates actively being drawn in manual mode before finishing
   const [activeManualPoints, setActiveManualPoints] = useState([]);
 
+  // State: Firestore Load ID
+  const [loadDocId, setLoadDocId] = useState("");
+
   // Load draft from localStorage on mount
   useEffect(() => {
     const savedRoute = localStorage.getItem('taipo_route_draft_v3');
@@ -99,6 +107,7 @@ export default function RouteEditorMap() {
         const parsed = JSON.parse(savedRoute);
         if (parsed.routeName) setRouteName(parsed.routeName);
         if (parsed.routeDescription) setRouteDescription(parsed.routeDescription);
+        if (parsed.published !== undefined) setPublished(parsed.published);
         if (Array.isArray(parsed.waypoints)) setWaypoints(parsed.waypoints);
         if (Array.isArray(parsed.segmentProfiles)) setSegmentProfiles(parsed.segmentProfiles);
         if (Array.isArray(parsed.segmentsPath)) setSegmentsPath(parsed.segmentsPath);
@@ -110,9 +119,9 @@ export default function RouteEditorMap() {
 
   // Save to localStorage when state changes
   useEffect(() => {
-    const draft = { routeName, routeDescription, waypoints, segmentProfiles, segmentsPath };
+    const draft = { routeName, routeDescription, published, waypoints, segmentProfiles, segmentsPath };
     localStorage.setItem('taipo_route_draft_v3', JSON.stringify(draft));
-  }, [routeName, routeDescription, waypoints, segmentProfiles, segmentsPath]);
+  }, [routeName, routeDescription, published, waypoints, segmentProfiles, segmentsPath]);
 
   // Find active waypoint POI helper
   const activeWaypoint = useMemo(() => {
@@ -301,6 +310,127 @@ export default function RouteEditorMap() {
     }
     
     setActiveManualPoints([]);
+  };
+
+  // Save Route to Cloud Firestore
+  const handleSaveToFirestore = async () => {
+    if (waypoints.length === 0) return;
+    
+    setIsLoadingRoute(true);
+    try {
+      // 1. Format stations according to routeData.js structure
+      const stations = waypoints.map((wp, index) => ({
+        id: wp.id,
+        name: wp.name,
+        lat: wp.latlng[0],
+        lng: wp.latlng[1],
+        badge: index === 0 ? "起點" : index === waypoints.length - 1 ? "終點" : `站 ${String.fromCharCode(65 + index)}`,
+        hook: wp.description.substring(0, 40) + (wp.description.length > 40 ? "..." : ""),
+        body: wp.description,
+        imgs: wp.imageUrl ? [wp.imageUrl] : [],
+        audioUrl: wp.audioUrl || ""
+      }));
+
+      // 2. Format segments detailed coordinates
+      const segments = segmentsPath.map((path, idx) => {
+        const intermediatePoints = path.slice(1, -1).map(coord => ({
+          lat: coord[0],
+          lng: coord[1]
+        }));
+        return {
+          from: waypoints[idx].id,
+          to: waypoints[idx + 1].id,
+          waypoints: intermediatePoints
+        };
+      });
+
+      // 3. Formulate full document schema
+      const docId = routeName.trim().replace(/\s+/g, '_').toLowerCase() || "taipo_history_route";
+      const routePayload = {
+        id: docId,
+        name: routeName,
+        subtitle: routeDescription,
+        color: "#3b82f6", // Default blue highlight
+        colorDark: "#1d4ed8",
+        startStation: waypoints[0]?.name || "",
+        stationCount: waypoints.length,
+        stations,
+        segments,
+        published, // Flag indicating if this should be visible on client-facing MapView
+        
+        // Editor recovery state variables
+        editorDraft: {
+          waypoints,
+          segmentProfiles,
+          segmentsPath: JSON.stringify(segmentsPath), // Bypasses Firestore nested array limitation
+          routeName,
+          routeDescription,
+          published
+        },
+        updatedAt: new Date().toISOString()
+      };
+
+      // 4. Save to firestore collection "guided_routes"
+      await setDoc(doc(db, "guided_routes", docId), routePayload);
+      alert(`🎉 路線「${routeName}」已成功儲存至 Firestore！\nDocument ID: ${docId}`);
+      setLoadDocId(docId); // Auto-fill load ID for convenience
+    } catch (e) {
+      console.error("Firestore 儲存失敗:", e);
+      alert(`❌ 儲存失敗！\n請確認您的 .env.local 中配置了正確的 Firebase 金鑰，且 Firestore 的安全性規則已啟用。\n\n錯誤詳情: ${e.message}`);
+    } finally {
+      setIsLoadingRoute(false);
+    }
+  };
+
+  // Load Route from Cloud Firestore
+  const handleLoadFromFirestore = async (targetId) => {
+    if (!targetId) return;
+    const cleanId = targetId.trim();
+    setIsLoadingRoute(true);
+    try {
+      const docSnap = await getDoc(doc(db, "guided_routes", cleanId));
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        
+        // Load global published status
+        if (data.published !== undefined) setPublished(data.published);
+        
+        if (data.editorDraft) {
+          if (data.editorDraft.routeName) setRouteName(data.editorDraft.routeName);
+          if (data.editorDraft.routeDescription) setRouteDescription(data.editorDraft.routeDescription);
+          if (data.editorDraft.published !== undefined) setPublished(data.editorDraft.published);
+          if (Array.isArray(data.editorDraft.waypoints)) setWaypoints(data.editorDraft.waypoints);
+          if (Array.isArray(data.editorDraft.segmentProfiles)) setSegmentProfiles(data.editorDraft.segmentProfiles);
+          
+          // Safely parse segmentsPath from stringified JSON or fallback to array
+          if (data.editorDraft.segmentsPath) {
+            if (typeof data.editorDraft.segmentsPath === 'string') {
+              try {
+                setSegmentsPath(JSON.parse(data.editorDraft.segmentsPath));
+              } catch (parseErr) {
+                console.error("解析 segmentsPath 失敗:", parseErr);
+              }
+            } else if (Array.isArray(data.editorDraft.segmentsPath)) {
+              setSegmentsPath(data.editorDraft.segmentsPath);
+            }
+          }
+          
+          alert(`🎉 成功從 Firestore 載入路線「${data.editorDraft.routeName || cleanId}」！`);
+        } else {
+          // Try loading fallback values from standard schema if editorDraft is missing
+          if (data.name) setRouteName(data.name);
+          if (data.subtitle) setRouteDescription(data.subtitle);
+          alert("⚠️ 已載入路線基本資料，但由於缺少編輯器草稿回復數據，部分進階屬性可能需手動重設。");
+        }
+      } else {
+        alert(`❌ 找不到 Document ID 為「${cleanId}」的路線！`);
+      }
+    } catch (e) {
+      console.error("Firestore 載入失敗:", e);
+      alert(`❌ 載入失敗！\n請確認您的金鑰配置正確且資料庫中有此文檔。\n\n錯誤詳情: ${e.message}`);
+    } finally {
+      setIsLoadingRoute(false);
+    }
   };
 
   // Change specific segment profile
@@ -509,8 +639,56 @@ export default function RouteEditorMap() {
                 onChange={(e) => setRouteDescription(e.target.value)}
                 placeholder="輸入關於整條路線的概括介紹..."
                 rows="2"
-                className="w-full bg-slate-900/60 border border-white/10 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/25 transition-all resize-none shadow-inner"
+                className="w-full bg-slate-900/60 border border-white/10 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/25 transition-all resize-none shadow-inner animate-pulse-subtle"
               />
+            </div>
+            
+            {/* Publish Toggle Button */}
+            <div className="flex items-center justify-between bg-blue-500/10 border border-blue-500/20 rounded-xl px-3 py-2.5 mt-1 transition-all shadow-md">
+              <div className="flex flex-col pr-2">
+                <span className="text-xs font-bold text-blue-200 flex items-center gap-1.5">
+                  📢 發布至前台地圖
+                </span>
+                <span className="text-[9px] text-slate-400 leading-tight">
+                  開啟後，前台訪客地圖將即時加載顯示此路線與站點
+                </span>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer flex-shrink-0">
+                <input 
+                  type="checkbox" 
+                  checked={published}
+                  onChange={(e) => setPublished(e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-8 h-4.5 bg-slate-800 rounded-full peer peer-focus:ring-1 peer-focus:ring-blue-500/50 peer-checked:after:translate-x-3.5 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2.5px] after:left-[2.5px] after:bg-slate-400 after:border-slate-400 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-blue-500 peer-checked:after:bg-white peer-checked:after:border-white"></div>
+              </label>
+            </div>
+            
+            {/* Firestore Quick Load Input */}
+            <div className="border-t border-white/5 pt-2.5 mt-1">
+              <label className="block text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                ☁️ 載入自 Firestore
+              </label>
+              <div className="flex gap-1.5">
+                <input 
+                  type="text" 
+                  value={loadDocId} 
+                  onChange={(e) => setLoadDocId(e.target.value)}
+                  placeholder="輸入 Document ID (例如: taipo_history_route)"
+                  className="flex-1 bg-slate-950/80 border border-white/10 rounded-xl px-2.5 py-1.5 text-white text-[10px] focus:outline-none focus:border-blue-500 placeholder-slate-600 transition-all font-mono"
+                />
+                <button
+                  onClick={() => handleLoadFromFirestore(loadDocId)}
+                  disabled={!loadDocId}
+                  className={`px-3 py-1.5 rounded-xl text-[9px] font-bold transition-all border ${
+                    !loadDocId
+                      ? 'bg-white/5 border-white/5 text-slate-600 cursor-not-allowed'
+                      : 'bg-blue-600 border-blue-500 text-white hover:bg-blue-500 shadow-md shadow-blue-500/10 hover:shadow-blue-500/20 active:scale-95'
+                  }`}
+                >
+                  載入
+                </button>
+              </div>
             </div>
           </div>
 
@@ -858,14 +1036,12 @@ export default function RouteEditorMap() {
               <span>💾 匯出 GeoJSON</span>
             </button>
             <button
-              onClick={() => {
-                alert("即將串接至 Firebase Firestore 資料庫！請閱讀後續指引完成資料庫配置。");
-              }}
+              onClick={handleSaveToFirestore}
               disabled={waypoints.length === 0}
               className={`py-3 px-3 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-1.5 shadow-lg ${
                 waypoints.length === 0
                   ? 'bg-white/5 text-slate-600 cursor-not-allowed border border-white/5 shadow-none'
-                  : 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-emerald-500/10'
+                  : 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-emerald-500/10 active:scale-95'
               }`}
             >
               <span>☁️ 儲存至 Firestore</span>

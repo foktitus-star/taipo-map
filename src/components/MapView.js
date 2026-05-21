@@ -12,6 +12,8 @@ import {
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { routes } from '@/data/routeData';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import ZoningLayer from './layers/ZoningLayer';
 import ComfortLayer from './layers/ComfortLayer';
 import RouteLayer from './layers/RouteLayer';
@@ -65,17 +67,17 @@ const ROUTE_LABELS = [
 ];
 
 // ── FitBounds helper component ─────────────────────────────
-function FitBoundsOnLoad() {
+function FitBoundsOnLoad({ allRoutes }) {
   const map = useMap();
   useEffect(() => {
     // Gather all station coords
-    const allCoords = routes.flatMap((r) =>
+    const allCoords = allRoutes.flatMap((r) =>
       r.stations.map((s) => [s.lat, s.lng])
     );
     if (allCoords.length > 0) {
       map.fitBounds(allCoords, { padding: [30, 30] });
     }
-  }, [map]);
+  }, [map, allRoutes]);
   return null;
 }
 
@@ -106,10 +108,57 @@ function AddMarkerInteraction({ isAddMode, onAddMarker }) {
 
 // ── Main map component ─────────────────────────────────────
 export default function MapView({ onStartTour }) {
-  const [visibility, setVisibility] = useState(
-    routes.map(() => true)
-  );
+  const [allRoutes, setAllRoutes] = useState(routes);
+  const [visibility, setVisibility] = useState([]);
   const [expandPanel, setExpandPanel] = useState(false);
+
+  // Fetch dynamic routes from Firestore
+  useEffect(() => {
+    const fetchPublishedRoutes = async () => {
+      try {
+        const q = query(collection(db, "guided_routes"), where("published", "==", true));
+        const querySnapshot = await getDocs(q);
+        const fetchedRoutes = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (data.stations && data.stations.length > 0) {
+            fetchedRoutes.push({
+              id: data.id || doc.id,
+              name: data.name || "未命名路線",
+              subtitle: data.subtitle || "",
+              color: data.color || "#3B82F6",
+              colorDark: data.colorDark || "#1D4ED8",
+              startStation: data.startStation || "",
+              stationCount: data.stationCount || data.stations.length,
+              stations: data.stations,
+              segments: data.segments || []
+            });
+          }
+        });
+
+        if (fetchedRoutes.length > 0) {
+          setAllRoutes((prev) => {
+            // Keep original static routes, append unique dynamic ones
+            const existingIds = new Set(prev.map(r => r.id));
+            const uniqueFetched = fetchedRoutes.filter(r => !existingIds.has(r.id));
+            return [...prev, ...uniqueFetched];
+          });
+        }
+      } catch (err) {
+        console.error("無法載入 Firestore 發布的路線:", err);
+      }
+    };
+
+    fetchPublishedRoutes();
+  }, []);
+
+  // Update visibility when allRoutes updates
+  useEffect(() => {
+    setVisibility((prev) => {
+      const next = allRoutes.map((r, idx) => prev[idx] !== undefined ? prev[idx] : true);
+      return next;
+    });
+  }, [allRoutes]);
 
   // Open Data layers state (Toggles only)
   const [showTrees, setShowTrees] = useState(false);
@@ -161,8 +210,8 @@ export default function MapView({ onStartTour }) {
   };
 
   const polylines = useMemo(
-    () => routes.map((r) => buildPolyline(r)),
-    []
+    () => allRoutes.map((r) => buildPolyline(r)),
+    [allRoutes]
   );
 
   const toggleRoute = (idx) => {
@@ -173,8 +222,8 @@ export default function MapView({ onStartTour }) {
     });
   };
 
-  const allOn = () => setVisibility(routes.map(() => true));
-  const allOff = () => setVisibility(routes.map(() => false));
+  const allOn = () => setVisibility(allRoutes.map(() => true));
+  const allOff = () => setVisibility(allRoutes.map(() => false));
 
   // Geolocation handler
   const handleLocate = () => {
@@ -218,7 +267,7 @@ export default function MapView({ onStartTour }) {
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
           className="map-tiles-tinted"
         />
-        <FitBoundsOnLoad />
+        <FitBoundsOnLoad allRoutes={allRoutes} />
         <FitBoundsOnHistoryChange activeId={activeHistory} />
         <MapFlyTo center={userPos} />
         <AddMarkerInteraction isAddMode={isAddMarkerMode} onAddMarker={handleAddMarker} />
@@ -240,7 +289,7 @@ export default function MapView({ onStartTour }) {
         <ComfortLayer showTrees={showTrees} showSidewalks={showSidewalks} />
         <TemperatureLayer show={showTemperature} url={temperatureUrl} />
 
-        {routes.map((route, ri) =>
+        {allRoutes.map((route, ri) =>
           visibility[ri] ? (
             <RouteLayer
               key={route.id}
@@ -311,7 +360,7 @@ export default function MapView({ onStartTour }) {
             {/* Route toggles */}
             <div id="tour-route-toggles" className="w-full">
               <div className="space-y-2 mb-4">
-                {routes.map((route, idx) => (
+                {allRoutes.map((route, idx) => (
                   <label
                     key={route.id}
                     className="flex items-center gap-3 cursor-pointer
@@ -329,7 +378,7 @@ export default function MapView({ onStartTour }) {
                       style={{ background: route.color }}
                     />
                     <span className="text-sm leading-tight">
-                      {ROUTE_LABELS[idx].label}
+                      {ROUTE_LABELS[idx]?.label || route.name}
                     </span>
                   </label>
                 ))}
@@ -442,7 +491,7 @@ export default function MapView({ onStartTour }) {
             {/* Legend */}
             <div className="mt-4 pt-3 border-t border-slate-200">
               <p className="text-[11px] text-slate-500 leading-relaxed">
-                共 {routes.reduce((s, r) => s + r.stations.length, 0)} 個站點
+                共 {allRoutes.reduce((s, r) => s + r.stations.length, 0)} 個站點
                 ・點擊站點查看詳情
               </p>
             </div>
