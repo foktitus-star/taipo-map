@@ -63,7 +63,7 @@ function buildPolyline(route) {
 
 // ── Route labels for the control panel ─────────────────────
 const ROUTE_LABELS = [
-  { emoji: '🌊', label: '從河到海' },
+
 ];
 
 // ── FitBounds helper component ─────────────────────────────

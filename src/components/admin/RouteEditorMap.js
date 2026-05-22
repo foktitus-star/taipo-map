@@ -123,6 +123,9 @@ export default function RouteEditorMap() {
     localStorage.setItem('taipo_route_draft_v3', JSON.stringify(draft));
   }, [routeName, routeDescription, published, waypoints, segmentProfiles, segmentsPath]);
 
+  // Reference for file input (GeoJSON Import)
+  const fileInputRef = useRef(null);
+
   // Find active waypoint POI helper
   const activeWaypoint = useMemo(() => {
     return waypoints.find(wp => wp.id === activeWaypointId) || null;
@@ -611,6 +614,59 @@ export default function RouteEditorMap() {
     downloadAnchor.remove();
   };
 
+  const handleImportGeoJSON = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const geojson = JSON.parse(e.target.result);
+        if (geojson.type !== "FeatureCollection") {
+          throw new Error("無效的 GeoJSON 格式：必須是 FeatureCollection。");
+        }
+
+        // Extract route info
+        if (geojson.properties?.routeName) setRouteName(geojson.properties.routeName);
+        if (geojson.properties?.routeDescription) setRouteDescription(geojson.properties.routeDescription);
+
+        // Extract waypoints
+        const importedWaypoints = geojson.features
+          .filter(f => f.properties?.type === "guided_waypoint")
+          .sort((a, b) => (a.properties.sequence || 0) - (b.properties.sequence || 0))
+          .map((f, i) => ({
+            id: `imported_${Date.now()}_${i}`,
+            name: f.properties.name || `站點 ${i + 1}`,
+            description: f.properties.description || "",
+            audioUrl: f.properties.audioUrl || "",
+            imageUrl: f.properties.imageUrl || "",
+            latlng: [f.geometry.coordinates[1], f.geometry.coordinates[0]] // GeoJSON is LngLat, Leaflet is LatLng
+          }));
+
+        if (importedWaypoints.length > 0) {
+          setWaypoints(importedWaypoints);
+          // Reset routing profiles and segments
+          setSegmentProfiles(Array(Math.max(0, importedWaypoints.length - 1)).fill('foot'));
+          // Connect with simple straight lines initially
+          const straightLines = [];
+          for (let i = 0; i < importedWaypoints.length - 1; i++) {
+            straightLines.push([importedWaypoints[i].latlng, importedWaypoints[i+1].latlng]);
+          }
+          setSegmentsPath(straightLines);
+          alert(`🎉 成功匯入 ${importedWaypoints.length} 個站點！\n系統已先以「直線」連接各站，請手動調整交通方式以重新計算路徑。`);
+        } else {
+          alert("⚠️ 匯入的 GeoJSON 中找不到符合 'guided_waypoint' 格式的站點資料。");
+        }
+      } catch (err) {
+        console.error("GeoJSON 匯入失敗:", err);
+        alert(`❌ 匯入失敗！請確保檔案格式正確。\n\n詳細錯誤: ${err.message}`);
+      }
+    };
+    reader.readAsText(file);
+    // Reset input so the same file can be selected again
+    event.target.value = '';
+  };
+
   return (
     <div className="flex h-screen w-full bg-[#0a0a14] text-slate-100 font-sans overflow-hidden">
       {/* ── Left Administration Dashboard Panel ──────────────────────── */}
@@ -1042,6 +1098,21 @@ export default function RouteEditorMap() {
           )}
           
           <div className="grid grid-cols-2 gap-2">
+            {/* Hidden file input */}
+            <input 
+              type="file" 
+              accept=".geojson,.json" 
+              ref={fileInputRef} 
+              className="hidden" 
+              onChange={handleImportGeoJSON} 
+            />
+            
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="py-3 px-3 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-1.5 shadow-lg bg-slate-800 hover:bg-slate-700 text-white border border-white/10 hover:shadow-white/5"
+            >
+              <span>📂 匯入 GeoJSON</span>
+            </button>
             <button
               onClick={handleExportGeoJSON}
               disabled={waypoints.length === 0}
@@ -1053,18 +1124,19 @@ export default function RouteEditorMap() {
             >
               <span>💾 匯出 GeoJSON</span>
             </button>
-            <button
-              onClick={handleSaveToFirestore}
-              disabled={waypoints.length === 0}
-              className={`py-3 px-3 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-1.5 shadow-lg ${
-                waypoints.length === 0
-                  ? 'bg-white/5 text-slate-600 cursor-not-allowed border border-white/5 shadow-none'
-                  : 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-emerald-500/10 active:scale-95'
-              }`}
-            >
-              <span>☁️ 儲存至 Firestore</span>
-            </button>
           </div>
+          
+          <button
+            onClick={handleSaveToFirestore}
+            disabled={waypoints.length === 0}
+            className={`w-full py-3 px-3 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-1.5 shadow-lg ${
+              waypoints.length === 0
+                ? 'bg-white/5 text-slate-600 cursor-not-allowed border border-white/5 shadow-none'
+                : 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-emerald-500/10 active:scale-95'
+            }`}
+          >
+            <span>☁️ 儲存至 Firestore</span>
+          </button>
           <div className="text-[10px] text-slate-500 text-center font-medium font-mono leading-none">
             Taipo Map Routing Admin &copy; 2026
           </div>

@@ -76,7 +76,7 @@ export default function HomePage() {
             element: '#tour-route-toggles',
             popover: {
               title: '🚶 精選導覽路線',
-              description: '包含「從河到海」特色導覽路線。您可以勾選來顯示或隱藏路線，或點擊地圖上的站點標記查看詳細的地景與歷史故事！',
+              description: '地圖會即時載入您從後台發布的特色導覽路線。您可以勾選來顯示或隱藏路線，或點擊地圖上的站點標記查看詳細的地景與歷史故事！',
               side: 'left',
               align: 'start'
             }
@@ -270,7 +270,7 @@ export default function HomePage() {
                   <div className="bg-white p-4 rounded-lg border border-blue-100">
                     <p className="text-sm font-semibold text-slate-700 mb-3">📂 圖層分類：</p>
                     <ul className="text-sm text-slate-600 space-y-2 ml-4">
-                      <li>• <strong>🚶 路線</strong> - 「從河到海」特色導覽路線</li>
+                      <li>• <strong>🚶 路線</strong> - 您發布的特色導覽路線</li>
                       <li>• <strong>🕰️ 古今地圖</strong> - 大埔歷史地圖疊加</li>
                       <li>• <strong>🛰️ 衛星影像</strong> - 現代衛星影像與植被、濕度遙測指數</li>
                       <li>• <strong>🌳 開放資料</strong> - 遮蔭與土地使用等規劃分區</li>
@@ -282,12 +282,12 @@ export default function HomePage() {
                 {/* Routes Section */}
                 <div className="bg-green-50 p-5 rounded-xl border border-green-200">
                   <h3 className="text-xl font-bold text-slate-900 mb-4">🚶 特色導覽路線</h3>
-                  <p className="text-sm text-slate-600 mb-4">地圖上顯示了精選的「從河到海」導覽路線，沿林村河串起多個大埔地景站點。</p>
+                  <p className="text-sm text-slate-600 mb-4">地圖上顯示了精選的導覽路線，沿途串起多個大埔地景站點。</p>
                   
                   <div className="bg-white p-4 rounded-lg mb-4 border border-green-100">
                     <p className="text-sm font-semibold text-slate-700 mb-3">🔵 導覽路線：</p>
                     <ul className="text-sm text-slate-600 space-y-2 ml-4">
-                      <li>• <span className="text-blue-500 font-bold">●</span> 路線：從河到海 (廣福橋至大埔海濱公園)</li>
+                      <li>• <span className="text-blue-500 font-bold">●</span> 路線：您從後台建立與發布的路線</li>
                     </ul>
                   </div>
 
@@ -438,7 +438,7 @@ export default function HomePage() {
                   <h3 className="text-xl font-bold text-slate-900 mb-2">🚶 路線與站點</h3>
                   <p className="text-slate-600 mb-3">精選社區導覽路線：</p>
                   <ul className="text-sm text-slate-600 space-y-2 ml-4">
-                    <li>• <strong>從河到海</strong> - 沿林村河探索大埔的城市地景與生態軌跡</li>
+                    <li>• <strong>歷史導覽路線</strong> - 探索大埔的城市地景與生態軌跡</li>
                   </ul>
                 </div>
               </div>
