@@ -1,6 +1,5 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
-import { getAuth, signInAnonymously } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -15,14 +14,4 @@ const firebaseConfig = {
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 const db = getFirestore(app);
 
-// Initialize Auth and sign in anonymously (client‑side only)
-let auth;
-if (typeof window !== 'undefined') {
-  auth = getAuth(app);
-  // Trigger anonymous sign‑in once; ignore if already signed in
-  if (!auth.currentUser) {
-    signInAnonymously(auth).catch(err => console.error('Anonymous sign‑in failed:', err));
-  }
-}
-
-export { app, db, auth };
+export { app, db };
