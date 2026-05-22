@@ -23,6 +23,7 @@ const MapView = dynamic(() => import('@/components/MapView'), {
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState('map'); // 'usage', 'map', 'layers', 'form', 'history'
   const [fontSize, setFontSize] = useState('medium'); // 'small', 'medium', 'large'
+  const [showUpdateLog, setShowUpdateLog] = useState(false);
 
   // Calculate font scale multiplier
   const fontScale = fontSize === 'small' ? 0.875 : fontSize === 'large' ? 1.125 : 1;
@@ -186,8 +187,19 @@ export default function HomePage() {
 
         <div className="mt-auto opacity-20 text-[10px] font-mono -rotate-90 whitespace-nowrap tracking-[0.3em] text-white">TAIPO_MAP</div>
 
-        {/* Font Size Selector */}
+        {/* Update Log Button */}
         <div className="mt-4 pt-4 border-t border-white/10 flex flex-col gap-2 w-full px-2">
+          <button 
+            onClick={() => setShowUpdateLog(true)}
+            className="w-full py-1.5 rounded transition-all font-semibold flex items-center justify-center gap-1.5 text-[10px] text-white/50 hover:bg-white/10 hover:text-white"
+            title="查看更新記錄"
+          >
+            📋 更新記錄
+          </button>
+        </div>
+
+        {/* Font Size Selector */}
+        <div className="mt-2 pt-2 border-t border-white/10 flex flex-col gap-2 w-full px-2">
           <p className="text-[10px] text-white/50 text-center font-semibold">字體大小</p>
           <div className="flex gap-1 justify-center">
             <button
@@ -492,6 +504,56 @@ export default function HomePage() {
             </div>
           </div>
         </div>
+
+        {/* ── Modal: Update Log ── */}
+        {showUpdateLog && (
+          <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+              <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                  <span>📋</span> 更新記錄
+                </h3>
+                <button 
+                  onClick={() => setShowUpdateLog(false)}
+                  className="text-slate-400 hover:text-slate-600 transition-colors p-1"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="p-6 max-h-[60vh] overflow-y-auto space-y-6">
+                <div className="relative pl-4 border-l-2 border-blue-100">
+                  <div className="absolute w-3 h-3 bg-blue-500 rounded-full -left-[7px] top-1.5 ring-4 ring-white"></div>
+                  <h4 className="font-bold text-slate-800 text-sm">v.1.1.0 <span className="text-slate-400 text-xs font-normal ml-2">2026-05-23</span></h4>
+                  <ul className="mt-2 space-y-1.5 text-sm text-slate-600 list-disc list-inside">
+                    <li>新增後台編輯器「匯入 GeoJSON」功能。</li>
+                    <li>修復 Vercel 環境變數缺失導致 Firestore 儲存無限載入的問題。</li>
+                    <li>移除前台地圖中寫死的預設路線，改為純動態載入。</li>
+                    <li>精簡「資料來源」介面說明。</li>
+                  </ul>
+                </div>
+
+                <div className="relative pl-4 border-l-2 border-slate-100">
+                  <div className="absolute w-3 h-3 bg-slate-300 rounded-full -left-[7px] top-1.5 ring-4 ring-white"></div>
+                  <h4 className="font-bold text-slate-800 text-sm">v.1.0.1 <span className="text-slate-400 text-xs font-normal ml-2">2026-05-22</span></h4>
+                  <ul className="mt-2 space-y-1.5 text-sm text-slate-600 list-disc list-inside">
+                    <li>解決了 Vercel Next.js 路由 404 錯誤。</li>
+                    <li>修復 <code>signInAnonymously</code> 造成前端水合作用崩潰的白畫面錯誤。</li>
+                  </ul>
+                </div>
+                
+                <div className="relative pl-4 border-l-2 border-slate-100">
+                  <div className="absolute w-3 h-3 bg-slate-300 rounded-full -left-[7px] top-1.5 ring-4 ring-white"></div>
+                  <h4 className="font-bold text-slate-800 text-sm">v.1.0.0 <span className="text-slate-400 text-xs font-normal ml-2">2026-05-21</span></h4>
+                  <ul className="mt-2 space-y-1.5 text-sm text-slate-600 list-disc list-inside">
+                    <li>大埔地圖導覽初版上線。</li>
+                    <li>實作 Leaflet 地圖、多圖層切換功能。</li>
+                    <li>完成後台路線編輯器基礎架構。</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );

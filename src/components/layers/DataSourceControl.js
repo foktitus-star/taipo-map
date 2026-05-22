@@ -22,9 +22,9 @@ export default function DataSourceControl() {
           <p className="font-bold text-slate-800 border-b border-slate-200/80 pb-1.5 mb-1.5">
             資料來源與鳴謝
           </p>
-          <p>• 信義社大 — 信水義河計畫</p>
-          <p>• 地圖公開資料 (OpenStreetMap 貢獻者)</p>
-          <p>• 其他田野調查資料</p>
+          <p>• 開放街圖 (OpenStreetMap)</p>
+          <p>• 歷史地圖與衛星遙測影像</p>
+          <p>• 在地田野調查與口述歷史</p>
         </div>
       </div>
       
