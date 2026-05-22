@@ -12,6 +12,7 @@
     "@google/earthengine": "^1.7.25",
     "@types/node": "^25.6.0",
     "@types/react-dom": "^19.2.3",
+    "dotenv": "^17.4.2",
     "driver.js": "^1.4.0",
     "firebase": "^12.13.0",
     "leaflet": "^1.9.4",

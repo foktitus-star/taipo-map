@@ -1,6 +1,7 @@
+// testSaveSimple.mjs - minimal Firestore write test
+import 'dotenv/config';
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
-import { getAuth, signInAnonymously } from 'firebase/auth';
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -11,18 +12,23 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase (safely checks if already initialized for SSR/HMR compatibility)
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 const db = getFirestore(app);
 
-// Initialize Auth and sign in anonymously (client‑side only)
-let auth;
-if (typeof window !== 'undefined') {
-  auth = getAuth(app);
-  // Trigger anonymous sign‑in once; ignore if already signed in
-  if (!auth.currentUser) {
-    signInAnonymously(auth).catch(err => console.error('Anonymous sign‑in failed:', err));
+async function testSaveSimple() {
+  const docId = 'simple_test_' + Date.now();
+  const payload = {
+    id: docId,
+    name: '簡易測試路線',
+    published: true,
+    updatedAt: new Date().toISOString()
+  };
+  try {
+    await setDoc(doc(db, 'guided_routes', docId), payload);
+    console.log('✅ 成功寫入 Firestore，docId:', docId);
+  } catch (e) {
+    console.error('❌ Firestore 寫入失敗:', e);
   }
 }
 
-export { app, db, auth };
+testSaveSimple();
