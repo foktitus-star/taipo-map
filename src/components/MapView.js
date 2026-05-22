@@ -14,12 +14,9 @@ import 'leaflet/dist/leaflet.css';
 import { routes } from '@/data/routeData';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import ZoningLayer from './layers/ZoningLayer';
-import ComfortLayer from './layers/ComfortLayer';
 import RouteLayer from './layers/RouteLayer';
 import UserLocationLayer from './layers/UserLocationLayer';
 import HistoricalLayer, { HistoricalControl, HISTORICAL_MAPS } from './layers/HistoricalLayer';
-import TemperatureLayer, { TemperatureControl, useTemperatureLayer } from './layers/TemperatureLayer';
 import DataSourceControl from './layers/DataSourceControl';
 import NodeFeedbackForm from './forms/NodeFeedbackForm';
 
@@ -126,7 +123,7 @@ export default function MapView({ onStartTour }) {
               id: data.id || doc.id,
               name: data.name || "未命名路線",
               subtitle: data.subtitle || "",
-              color: data.color || "#3B82F6",
+              color: data.color || "#2c704d",
               colorDark: data.colorDark || "#1D4ED8",
               startStation: data.startStation || "",
               stationCount: data.stationCount || data.stations.length,
@@ -160,11 +157,7 @@ export default function MapView({ onStartTour }) {
     });
   }, [allRoutes]);
 
-  // Open Data layers state (Toggles only)
-  const [showTrees, setShowTrees] = useState(false);
-  const [showSidewalks, setShowSidewalks] = useState(false);
-  const [showZoning, setShowZoning] = useState(false);
-  const [zoningOpacity, setZoningOpacity] = useState(0.45);
+
 
   // Historical basemap state (null = none active)
   const [activeHistory, setActiveHistory] = useState(null);
@@ -186,8 +179,7 @@ export default function MapView({ onStartTour }) {
     setSatelliteOpacities(prev => ({ ...prev, [id]: value }));
   };
 
-  // Temperature Layer State
-  const { showTemperature, setShowTemperature, temperatureUrl, temperatureLoading } = useTemperatureLayer();
+
 
   const toggleHistory = (id) =>
     setActiveHistory((prev) => (prev === id ? null : id));
@@ -285,9 +277,7 @@ export default function MapView({ onStartTour }) {
         />
 
         {/* ── Modular Layers ── */}
-        <ZoningLayer showZoning={showZoning} opacity={zoningOpacity} />
-        <ComfortLayer showTrees={showTrees} showSidewalks={showSidewalks} />
-        <TemperatureLayer show={showTemperature} url={temperatureUrl} />
+
 
         {allRoutes.map((route, ri) =>
           visibility[ri] ? (
@@ -402,73 +392,6 @@ export default function MapView({ onStartTour }) {
                 >
                   全清
                 </button>
-              </div>
-            </div>
-
-            {/* Open Data toggles */}
-            <div id="tour-open-data-toggles" className="w-full">
-              <div className="space-y-2 mb-4 pt-3 border-t border-slate-200">
-                <label
-                  className="flex items-center gap-3 cursor-pointer
-                             hover:bg-slate-50 rounded-lg px-2 py-1.5 transition-colors"
-                >
-                  <input
-                    type="checkbox"
-                    checked={showTrees}
-                    onChange={() => setShowTrees(!showTrees)}
-                    className="w-5 h-5 rounded accent-[#16a34a] cursor-pointer"
-                  />
-                  <span className="text-sm leading-tight text-slate-700">🌳 行道樹遮蔭</span>
-                </label>
-
-                <label
-                  className="flex items-center gap-3 cursor-pointer
-                             hover:bg-slate-50 rounded-lg px-2 py-1.5 transition-colors"
-                >
-                  <input
-                    type="checkbox"
-                    checked={showSidewalks}
-                    onChange={() => setShowSidewalks(!showSidewalks)}
-                    className="w-5 h-5 rounded accent-[#60a5fa] cursor-pointer"
-                  />
-                  <span className="text-sm leading-tight text-slate-700">🚶 人行道範圍</span>
-                </label>
-
-                <div className="flex flex-col mb-1">
-                  <label
-                    className="flex items-center gap-3 cursor-pointer
-                               hover:bg-slate-50 rounded-lg px-2 py-1.5 transition-colors"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={showZoning}
-                      onChange={() => setShowZoning(!showZoning)}
-                      className="w-5 h-5 rounded accent-[#fb923c] cursor-pointer"
-                    />
-                    <span className="text-sm leading-tight text-slate-700">🏘️ 都市計畫分區</span>
-                  </label>
-
-                  {/* Opacity Slider */}
-                  <div className={`
-                    flex items-center gap-2 px-10 transition-all duration-300 ease-in-out
-                    ${showZoning ? 'h-6 opacity-100 mt-0.5' : 'h-0 opacity-0 overflow-hidden'}
-                  `}>
-                    <input
-                      type="range"
-                      min="0"
-                      max="1"
-                      step="0.01"
-                      value={zoningOpacity}
-                      onChange={(e) => setZoningOpacity(parseFloat(e.target.value))}
-                      className="flex-1 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#fb923c]"
-                    />
-                    <span className="text-[10px] font-mono font-bold text-slate-500 w-8 text-right">
-                      {Math.round(zoningOpacity * 100)}%
-                    </span>
-                  </div>
-                </div>
-
-                <TemperatureControl show={showTemperature} onChange={setShowTemperature} loading={temperatureLoading} />
               </div>
             </div>
 

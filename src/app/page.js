@@ -9,7 +9,7 @@ import 'driver.js/dist/driver.css';
 const MapView = dynamic(() => import('@/components/MapView'), {
   ssr: false,
   loading: () => (
-    <div className="flex items-center justify-center w-full h-dvh bg-[#0f0f1a]">
+    <div className="flex items-center justify-center w-full h-dvh bg-[#0e2a1d]">
       <div className="text-center">
         <div className="inline-block w-10 h-10 border-3 border-white/20 border-t-primary-400 rounded-full animate-spin mb-4" />
         <p className="text-white/60 text-sm tracking-widest">
@@ -82,15 +82,7 @@ export default function HomePage() {
               align: 'start'
             }
           },
-          {
-            element: '#tour-open-data-toggles',
-            popover: {
-              title: '🌳 開放資料與即時溫度',
-              description: '包含開放資料（行道樹遮蔭、人行道範圍、都市計畫分區）以及即時溫度分布。勾選後可利用不透明度滑桿（0-100%）自由調整，幫助您進行跨圖層對照！',
-              side: 'left',
-              align: 'start'
-            }
-          },
+
           {
             element: '#tour-historical-control',
             popover: {
@@ -135,11 +127,11 @@ export default function HomePage() {
   };
 
   return (
-    <main className="relative w-full h-dvh flex overflow-hidden bg-slate-900" style={{
+    <main className="relative w-full h-dvh flex overflow-hidden bg-[#0e2a1d]" style={{
       '--font-scale': fontScale,
     }}>
       {/* ── Left Sidebar ── */}
-      <nav id="sidebar-navigation" className="z-[2000] w-24 md:w-32 bg-slate-900/95 backdrop-blur-md border-r border-white/10 flex flex-col items-center py-6 gap-4 shadow-2xl">
+      <nav id="sidebar-navigation" className="z-[2000] w-24 md:w-32 bg-[#0e2a1d]/95 backdrop-blur-md border-r border-white/10 flex flex-col items-center py-6 gap-4 shadow-2xl">
         <div className="flex flex-col items-center text-center px-1 mb-4 gap-1.5">
           <h1 className="text-primary-400 text-sm md:text-base font-black tracking-widest leading-tight">
             大埔地圖導覽
@@ -285,8 +277,8 @@ export default function HomePage() {
                       <li>• <strong>🚶 路線</strong> - 您發布的特色導覽路線</li>
                       <li>• <strong>🕰️ 古今地圖</strong> - 大埔歷史地圖疊加</li>
                       <li>• <strong>🛰️ 衛星影像</strong> - 現代衛星影像與植被、濕度遙測指數</li>
-                      <li>• <strong>🌳 開放資料</strong> - 遮蔭與土地使用等規劃分區</li>
-                      <li>• <strong>🌡️ 溫度圖層</strong> - 實時微氣候溫度分布</li>
+
+
                     </ul>
                   </div>
                 </div>
@@ -432,19 +424,6 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                  <h3 className="text-xl font-bold text-slate-900 mb-2">🌳 開放資料圖層</h3>
-                  <p className="text-slate-600 mb-3">大埔公共基礎設施與綠化分布資料（待導入）：</p>
-                  <ul className="text-sm text-slate-600 space-y-2 ml-4">
-                    <li>• <strong>行道樹遮蔭</strong> - 大埔各主要道路的林蔭覆蓋</li>
-                    <li>• <strong>人行道與單車徑範圍</strong> - 大埔完善的自行車網絡與步道分布</li>
-                  </ul>
-                </div>
-
-                <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                  <h3 className="text-xl font-bold text-slate-900 mb-2">🌡️ 溫度圖層</h3>
-                  <p className="text-slate-600">實時溫度分布，展現大埔新市鎮的高密度住宅與林村河綠帶、海濱水體的微氣候冷卻效應。</p>
-                </div>
 
                 <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
                   <h3 className="text-xl font-bold text-slate-900 mb-2">🚶 路線與站點</h3>

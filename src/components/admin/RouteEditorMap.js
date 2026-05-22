@@ -361,7 +361,7 @@ export default function RouteEditorMap() {
         id: docId,
         name: routeName,
         subtitle: routeDescription,
-        color: "#3b82f6", // Default blue highlight
+        color: "#2c704d", // Default primary green
         colorDark: "#1d4ed8",
         startStation: waypoints[0]?.name || "",
         stationCount: waypoints.length,
@@ -577,7 +577,7 @@ export default function RouteEditorMap() {
           type: "Feature",
           properties: {
             type: "route_track",
-            stroke: "#3b82f6",
+            stroke: "#2c704d",
             "stroke-opacity": 0.85,
             "stroke-width": 4
           },
