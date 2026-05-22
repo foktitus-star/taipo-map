@@ -145,7 +145,7 @@ export function SatelliteControl({ activeSatellite, toggleSatellite, satelliteOp
               step="0.01"
               value={satelliteOpacities[sm.id] || 0.7}
               onChange={(e) => onOpacityChange(sm.id, parseFloat(e.target.value))}
-              className="flex-1 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+              className="flex-1 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary-600"
             />
             <span className="text-[10px] font-mono font-bold text-slate-500 w-8 text-right">
               {Math.round((satelliteOpacities[sm.id] || 0.7) * 100)}%

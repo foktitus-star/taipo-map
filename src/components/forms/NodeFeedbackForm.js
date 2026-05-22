@@ -118,7 +118,7 @@ export default function NodeFeedbackForm({ lat, lng, stationId, stationName, onC
 
   return (
     <div className="p-2 min-w-[280px]">
-      <h3 className="font-bold text-lg text-blue-900 border-b pb-2 mb-3">
+      <h3 className="font-bold text-lg text-primary-900 border-b pb-2 mb-3">
         {stationName || '新增標記'} <span className="text-sm text-slate-500 font-normal ml-1">提供回饋</span>
       </h3>
 
@@ -134,7 +134,7 @@ export default function NodeFeedbackForm({ lat, lng, stationId, stationName, onC
                 className={`
                   px-3 py-1 rounded-full text-xs font-medium border transition-colors
                   ${selectedTags.includes(tag) 
-                    ? 'bg-blue-600 text-white border-blue-600' 
+                    ? 'bg-primary-600 text-white border-primary-600' 
                     : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'}
                 `}
               >
@@ -151,7 +151,7 @@ export default function NodeFeedbackForm({ lat, lng, stationId, stationName, onC
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="這裡有什麼特別的回憶嗎？"
-            className="w-full p-2 border border-slate-200 rounded-lg text-sm min-h-[80px] focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+            className="w-full p-2 border border-slate-200 rounded-lg text-sm min-h-[80px] focus:ring-2 focus:ring-primary-500 outline-none resize-none"
           />
         </div>
 
@@ -190,7 +190,7 @@ export default function NodeFeedbackForm({ lat, lng, stationId, stationName, onC
       </div>
       
       <button
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg disabled:opacity-50 flex justify-center items-center transition-colors"
+        className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 rounded-lg disabled:opacity-50 flex justify-center items-center transition-colors"
         onClick={handleSubmit}
         disabled={isSubmitting || (!description.trim() && selectedTags.length === 0 && !photoBase64)}
       >

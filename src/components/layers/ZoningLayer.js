@@ -52,9 +52,9 @@ export default function ZoningLayer({ showZoning, opacity = 0.45 }) {
             <div class="popup-badge mb-2" style="background: #fb923c; color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; display: inline-block;">
               ${p.code || '使用分區'}
             </div>
-            <h3 class="text-lg font-bold text-blue-900 mb-2">${p.name}</h3>
+            <h3 class="text-lg font-bold text-primary-900 mb-2">${p.name}</h3>
             <div class="space-y-3 text-sm text-slate-700 leading-relaxed">
-              <p class="bg-blue-50 p-2 rounded-lg border-l-4 border-blue-200">
+              <p class="bg-primary-50 p-2 rounded-lg border-l-4 border-primary-200">
                 ${info || '都市計畫中設定的特定土地用途區域。'}
               </p>
               <div class="grid grid-cols-2 gap-2 text-xs">

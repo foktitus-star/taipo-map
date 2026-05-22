@@ -11,7 +11,7 @@ const MapView = dynamic(() => import('@/components/MapView'), {
   loading: () => (
     <div className="flex items-center justify-center w-full h-dvh bg-[#0f0f1a]">
       <div className="text-center">
-        <div className="inline-block w-10 h-10 border-3 border-white/20 border-t-blue-400 rounded-full animate-spin mb-4" />
+        <div className="inline-block w-10 h-10 border-3 border-white/20 border-t-primary-400 rounded-full animate-spin mb-4" />
         <p className="text-white/60 text-sm tracking-widest">
           載入地圖中…
         </p>
@@ -141,7 +141,7 @@ export default function HomePage() {
       {/* ── Left Sidebar ── */}
       <nav id="sidebar-navigation" className="z-[2000] w-24 md:w-32 bg-slate-900/95 backdrop-blur-md border-r border-white/10 flex flex-col items-center py-6 gap-4 shadow-2xl">
         <div className="flex flex-col items-center text-center px-1 mb-4 gap-1.5">
-          <h1 className="text-blue-400 text-sm md:text-base font-black tracking-widest leading-tight">
+          <h1 className="text-primary-400 text-sm md:text-base font-black tracking-widest leading-tight">
             大埔地圖導覽
           </h1>
           <p className="text-slate-500 text-[8px] md:text-[9px] leading-tight font-semibold">
@@ -151,7 +151,7 @@ export default function HomePage() {
         
         <button 
           onClick={() => setActiveTab('map')}
-          className={`group relative p-3 rounded-xl transition-all duration-300 text-sm font-semibold ${activeTab === 'map' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'text-slate-400 hover:bg-white/5'}`}
+          className={`group relative p-3 rounded-xl transition-all duration-300 text-sm font-semibold ${activeTab === 'map' ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/20' : 'text-slate-400 hover:bg-white/5'}`}
           title="地圖 (Map)"
         >
           <span>🗺️ 地圖</span>
@@ -160,7 +160,7 @@ export default function HomePage() {
 
         <button 
           onClick={() => setActiveTab('layers')}
-          className={`group relative p-3 rounded-xl transition-all duration-300 text-sm font-semibold ${activeTab === 'layers' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'text-slate-400 hover:bg-white/5'}`}
+          className={`group relative p-3 rounded-xl transition-all duration-300 text-sm font-semibold ${activeTab === 'layers' ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/20' : 'text-slate-400 hover:bg-white/5'}`}
           title="圖層說明 (Layers)"
         >
           <span>📊 圖層說明</span>
@@ -169,7 +169,7 @@ export default function HomePage() {
 
         <button 
           onClick={() => setActiveTab('form')}
-          className={`group relative p-3 rounded-xl transition-all duration-300 text-sm font-semibold ${activeTab === 'form' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'text-slate-400 hover:bg-white/5'}`}
+          className={`group relative p-3 rounded-xl transition-all duration-300 text-sm font-semibold ${activeTab === 'form' ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/20' : 'text-slate-400 hover:bg-white/5'}`}
           title="回饋表單 (Feedback)"
         >
           <span>📝 回饋表單</span>
@@ -178,7 +178,7 @@ export default function HomePage() {
 
         <button 
           onClick={() => setActiveTab('history')}
-          className={`group relative p-3 rounded-xl transition-all duration-300 text-sm font-semibold ${activeTab === 'history' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'text-slate-400 hover:bg-white/5'}`}
+          className={`group relative p-3 rounded-xl transition-all duration-300 text-sm font-semibold ${activeTab === 'history' ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/20' : 'text-slate-400 hover:bg-white/5'}`}
           title="歷史故事 (History)"
         >
           <span>📚 歷史故事</span>
@@ -206,7 +206,7 @@ export default function HomePage() {
               onClick={() => setFontSize('small')}
               className={`px-2 py-1 rounded text-xs font-semibold transition-all ${
                 fontSize === 'small'
-                  ? 'bg-blue-600 text-white shadow-lg'
+                  ? 'bg-primary-600 text-white shadow-lg'
                   : 'bg-white/10 text-white/60 hover:bg-white/20'
               }`}
               title="小"
@@ -217,7 +217,7 @@ export default function HomePage() {
               onClick={() => setFontSize('medium')}
               className={`px-2 py-1 rounded text-sm font-semibold transition-all ${
                 fontSize === 'medium'
-                  ? 'bg-blue-600 text-white shadow-lg'
+                  ? 'bg-primary-600 text-white shadow-lg'
                   : 'bg-white/10 text-white/60 hover:bg-white/20'
               }`}
               title="中"
@@ -228,7 +228,7 @@ export default function HomePage() {
               onClick={() => setFontSize('large')}
               className={`px-2 py-1 rounded text-base font-semibold transition-all ${
                 fontSize === 'large'
-                  ? 'bg-blue-600 text-white shadow-lg'
+                  ? 'bg-primary-600 text-white shadow-lg'
                   : 'bg-white/10 text-white/60 hover:bg-white/20'
               }`}
               title="大"
@@ -253,7 +253,7 @@ export default function HomePage() {
           <div className="h-full overflow-y-auto">
             <div className="p-8">
               <div className="flex items-center justify-between mb-8">
-                <h2 className="text-3xl font-bold text-slate-900 border-l-8 border-blue-600 pl-6">使用方法</h2>
+                <h2 className="text-3xl font-bold text-slate-900 border-l-8 border-primary-600 pl-6">使用方法</h2>
                 <button
                   onClick={() => setActiveTab('map')}
                   className="text-2xl text-slate-400 hover:text-slate-600 transition-colors"
@@ -266,11 +266,11 @@ export default function HomePage() {
               
               <div className="space-y-6">
                 {/* Layer Control Section */}
-                <div className="bg-blue-50 p-5 rounded-xl border border-blue-200">
+                <div className="bg-primary-50 p-5 rounded-xl border border-primary-200">
                   <h3 className="text-xl font-bold text-slate-900 mb-4">📍 圖層控制面板</h3>
                   <p className="text-sm text-slate-600 mb-4">地圖右上角有一個圖層控制面板（☰ 按鈕），點擊展開後可以看到所有可用的圖層與導覽路線。</p>
                   
-                  <div className="bg-white p-4 rounded-lg mb-4 border border-blue-100">
+                  <div className="bg-white p-4 rounded-lg mb-4 border border-primary-100">
                     <p className="text-sm font-semibold text-slate-700 mb-3">✓ 如何選擇圖層與路線：</p>
                     <ul className="text-sm text-slate-600 space-y-2 ml-4">
                       <li>• 點擊圖層或路線名稱前的<strong>方形勾選框</strong>來開啟或關閉顯示</li>
@@ -279,7 +279,7 @@ export default function HomePage() {
                     </ul>
                   </div>
 
-                  <div className="bg-white p-4 rounded-lg border border-blue-100">
+                  <div className="bg-white p-4 rounded-lg border border-primary-100">
                     <p className="text-sm font-semibold text-slate-700 mb-3">📂 圖層分類：</p>
                     <ul className="text-sm text-slate-600 space-y-2 ml-4">
                       <li>• <strong>🚶 路線</strong> - 您發布的特色導覽路線</li>
@@ -299,7 +299,7 @@ export default function HomePage() {
                   <div className="bg-white p-4 rounded-lg mb-4 border border-green-100">
                     <p className="text-sm font-semibold text-slate-700 mb-3">🔵 導覽路線：</p>
                     <ul className="text-sm text-slate-600 space-y-2 ml-4">
-                      <li>• <span className="text-blue-500 font-bold">●</span> 路線：您從後台建立與發布的路線</li>
+                      <li>• <span className="text-primary-500 font-bold">●</span> 路線：您從後台建立與發布的路線</li>
                     </ul>
                   </div>
 
@@ -373,7 +373,7 @@ export default function HomePage() {
         >
           <div className="max-w-4xl mx-auto h-full overflow-y-auto">
             <div className="p-8 md:p-16">
-              <h2 className="text-4xl font-bold text-slate-900 mb-2 border-l-8 border-blue-600 pl-6">圖層說明</h2>
+              <h2 className="text-4xl font-bold text-slate-900 mb-2 border-l-8 border-primary-600 pl-6">圖層說明</h2>
               <p className="text-slate-500 mb-8">了解地圖上各個圖層的含義與用途</p>
               
               <div className="space-y-8">
@@ -404,7 +404,7 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
+                  <div className="bg-primary-50 border-l-4 border-primary-400 p-4 rounded">
                     <p className="text-sm text-slate-700"><strong>地景變遷觀察：</strong></p>
                     <p className="text-sm text-slate-600 mt-2">點擊地圖右上角 ☰ 展開「圖層控制」，開啟「官方地形圖」或「官方正射影像」，並調整透明度，您就可以親眼目睹昔日林村河曲折的天然水道如何經整治成為今日開闊的現代排洪河道，以及大埔海岸線的向外推移！</p>
                   </div>
@@ -457,7 +457,7 @@ export default function HomePage() {
 
               <button 
                 onClick={() => setActiveTab('map')}
-                className="mt-12 px-8 py-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200"
+                className="mt-12 px-8 py-4 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-all shadow-lg shadow-primary-200"
               >
                 返回地圖
               </button>
@@ -470,16 +470,16 @@ export default function HomePage() {
           className={`absolute inset-0 z-[1000] bg-white transition-transform duration-500 ease-in-out ${activeTab === 'history' ? 'translate-x-0' : '-translate-x-full'}`}
         >
           <div className="max-w-4xl mx-auto h-full overflow-y-auto">
-            <div className="aspect-video bg-gradient-to-r from-blue-900 to-indigo-950 relative flex items-center justify-center overflow-hidden">
+            <div className="aspect-video bg-gradient-to-r from-primary-900 to-indigo-950 relative flex items-center justify-center overflow-hidden">
               <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
               <div className="text-center px-6 z-10">
-                <p className="text-blue-400 text-xs font-bold uppercase tracking-[0.3em] mb-2">Taipo Historical Geo-Map</p>
+                <p className="text-primary-400 text-xs font-bold uppercase tracking-[0.3em] mb-2">Taipo Historical Geo-Map</p>
                 <h3 className="text-white font-serif font-black text-3xl md:text-5xl leading-tight">大埔歷史地景變遷</h3>
                 <p className="text-white/60 text-xs md:text-sm mt-3 max-w-xl mx-auto">從 1904 年的農野墟市，到如今林村河畔的現代綠色市鎮</p>
               </div>
             </div>
             <div className="p-8 md:p-16">
-              <h2 className="text-4xl font-serif font-bold text-slate-900 mb-8 border-l-8 border-blue-600 pl-6">大埔地圖導覽：地景與變遷</h2>
+              <h2 className="text-4xl font-serif font-bold text-slate-900 mb-8 border-l-8 border-primary-600 pl-6">大埔地圖導覽：地景與變遷</h2>
               <div className="prose prose-slate max-w-none">
                 <p className="text-xl leading-relaxed text-slate-600 mb-6">
                   大埔地處新界東部，擁有豐富的自然景緻與獨特的歷史城鎮脈絡，從傳統的墟市逐漸演變為如今現代化、規劃完善的綠色新市鎮。
@@ -497,7 +497,7 @@ export default function HomePage() {
               </div>
               <button 
                 onClick={() => setActiveTab('map')}
-                className="mt-8 px-8 py-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200"
+                className="mt-8 px-8 py-4 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-all shadow-lg shadow-primary-200"
               >
                 探索地圖
               </button>
@@ -521,8 +521,8 @@ export default function HomePage() {
                 </button>
               </div>
               <div className="p-6 max-h-[60vh] overflow-y-auto space-y-6">
-                <div className="relative pl-4 border-l-2 border-blue-100">
-                  <div className="absolute w-3 h-3 bg-blue-500 rounded-full -left-[7px] top-1.5 ring-4 ring-white"></div>
+                <div className="relative pl-4 border-l-2 border-primary-100">
+                  <div className="absolute w-3 h-3 bg-primary-500 rounded-full -left-[7px] top-1.5 ring-4 ring-white"></div>
                   <h4 className="font-bold text-slate-800 text-sm">v.1.1.0 <span className="text-slate-400 text-xs font-normal ml-2">2026-05-23</span></h4>
                   <ul className="mt-2 space-y-1.5 text-sm text-slate-600 list-disc list-inside">
                     <li>新增後台編輯器「匯入 GeoJSON」功能。</li>

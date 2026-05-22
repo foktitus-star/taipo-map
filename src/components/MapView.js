@@ -328,7 +328,7 @@ export default function MapView({ onStartTour }) {
         className={`
           absolute top-3 right-3 z-[1000]
           bg-white/95 backdrop-blur-md
-          border border-blue-900/10 rounded-2xl
+          border border-primary-900/10 rounded-2xl
           shadow-xl text-slate-800
           transition-all duration-300 ease-in-out
           ${expandPanel ? 'w-72 p-5' : 'w-12 h-12 p-0'}
@@ -342,7 +342,7 @@ export default function MapView({ onStartTour }) {
           className={`
             flex items-center justify-center
             ${expandPanel ? 'w-full mb-3' : 'w-12 h-12'}
-            rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-900
+            rounded-xl bg-primary-50 hover:bg-primary-100 text-primary-900
             transition-colors duration-200
             text-lg cursor-pointer font-bold
           `}
@@ -353,7 +353,7 @@ export default function MapView({ onStartTour }) {
 
         {expandPanel && (
           <div id="layer-control-panel-content" className="w-full">
-            <h3 className="text-base font-bold mb-3 tracking-wide text-blue-900">
+            <h3 className="text-base font-bold mb-3 tracking-wide text-primary-900">
               圖層控制
             </h3>
 
@@ -389,7 +389,7 @@ export default function MapView({ onStartTour }) {
                 <button
                   onClick={allOn}
                   className="flex-1 text-xs py-2 rounded-lg font-medium
-                             bg-blue-50 hover:bg-blue-100 text-blue-800
+                             bg-primary-50 hover:bg-primary-100 text-primary-800
                              transition-colors cursor-pointer"
                 >
                   全選
@@ -507,7 +507,7 @@ export default function MapView({ onStartTour }) {
                   w-full py-2.5 rounded-lg font-bold text-sm transition-all
                   flex items-center justify-center gap-2
                   ${isAddMarkerMode
-                    ? 'bg-blue-600 text-white shadow-md'
+                    ? 'bg-primary-600 text-white shadow-md'
                     : 'bg-slate-100 hover:bg-slate-200 text-slate-700'}
                 `}
               >
@@ -536,11 +536,11 @@ export default function MapView({ onStartTour }) {
           absolute top-[72px] right-3 z-[1000]
           w-12 h-12 rounded-2xl
           bg-white/95 backdrop-blur-md
-          border border-blue-900/10 shadow-lg
+          border border-primary-900/10 shadow-lg
           flex items-center justify-center
           text-2xl transition-all duration-200
-          hover:bg-blue-50 active:scale-95
-          ${locating ? 'animate-pulse text-blue-400' : 'text-blue-900'}
+          hover:bg-primary-50 active:scale-95
+          ${locating ? 'animate-pulse text-primary-400' : 'text-primary-900'}
         `}
         title="取得目前位置"
       >
@@ -559,8 +559,8 @@ export default function MapView({ onStartTour }) {
           className="
             flex items-center justify-center gap-2
             px-4 py-3 rounded-2xl text-xs font-bold
-            bg-blue-600 hover:bg-blue-700 text-white
-            shadow-xl shadow-blue-500/25 border border-blue-500/20
+            bg-primary-600 hover:bg-primary-700 text-white
+            shadow-xl shadow-primary-500/25 border border-primary-500/20
             transition-all duration-300 active:scale-95 cursor-pointer
           "
           title="使用方法 (How to Use)"

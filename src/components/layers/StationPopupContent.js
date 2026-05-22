@@ -58,7 +58,7 @@ export default function StationPopupContent({ station, routeColor }) {
             e.stopPropagation();
             setShowFeedback(true);
           }}
-          className="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm font-bold rounded transition-colors flex items-center justify-center gap-2"
+          className="w-full py-2 bg-primary-50 hover:bg-primary-100 text-primary-700 text-sm font-bold rounded transition-colors flex items-center justify-center gap-2"
         >
           <span>✍️</span> 在這裡留下回憶與照片
         </button>

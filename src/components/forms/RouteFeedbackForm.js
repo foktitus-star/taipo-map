@@ -78,14 +78,14 @@ export default function RouteFeedbackForm({ routeId, routeName, segmentId }) {
 
   return (
     <div className="p-2 min-w-[280px]">
-      <h3 className="font-bold text-lg text-blue-900 border-b pb-2 mb-3">
+      <h3 className="font-bold text-lg text-primary-900 border-b pb-2 mb-3">
         {routeName} <span className="text-sm text-slate-500 font-normal ml-1">路線評分</span>
       </h3>
 
       <div className="space-y-4 mb-4">
         {FACTORS.map(factor => (
           <div key={factor.id} className="bg-slate-50 p-3 rounded-lg border border-slate-100">
-            <h4 className="font-bold text-sm text-blue-800 mb-2">{factor.label}</h4>
+            <h4 className="font-bold text-sm text-primary-800 mb-2">{factor.label}</h4>
             <div className="flex justify-between gap-1">
               {SCORES.map(score => (
                 <button
@@ -94,7 +94,7 @@ export default function RouteFeedbackForm({ routeId, routeName, segmentId }) {
                   title={score.label}
                   className={`
                     flex flex-col items-center flex-1 py-1 rounded transition-colors
-                    ${scores[factor.id] === score.value ? 'bg-blue-100 shadow-sm ring-1 ring-blue-300' : 'hover:bg-slate-200 opacity-60'}
+                    ${scores[factor.id] === score.value ? 'bg-primary-100 shadow-sm ring-1 ring-primary-300' : 'hover:bg-slate-200 opacity-60'}
                   `}
                 >
                   <span className="text-xl leading-none mb-1">{score.emoji}</span>
@@ -107,7 +107,7 @@ export default function RouteFeedbackForm({ routeId, routeName, segmentId }) {
       </div>
       
       <button
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg disabled:opacity-50 flex justify-center items-center transition-colors"
+        className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 rounded-lg disabled:opacity-50 flex justify-center items-center transition-colors"
         onClick={handleSubmit}
         disabled={isSubmitting || FACTORS.some(f => !scores[f.id])}
       >

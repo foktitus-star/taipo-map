@@ -34,7 +34,7 @@ export default function UserLocationLayer({ position, accuracy }) {
         }}
       >
         <Popup>
-          <div className="text-xs font-bold text-blue-900">
+          <div className="text-xs font-bold text-primary-900">
             您目前的位置
           </div>
         </Popup>

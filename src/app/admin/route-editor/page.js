@@ -10,7 +10,7 @@ const RouteEditorMap = dynamic(
     loading: () => (
       <div className="flex items-center justify-center w-full h-screen bg-[#0f0f1a]">
         <div className="text-center">
-          <div className="inline-block w-10 h-10 border-3 border-white/20 border-t-blue-500 rounded-full animate-spin mb-4" />
+          <div className="inline-block w-10 h-10 border-3 border-white/20 border-t-primary-500 rounded-full animate-spin mb-4" />
           <p className="text-white/60 text-sm tracking-widest font-semibold">
             載入導賞編輯器中…
           </p>

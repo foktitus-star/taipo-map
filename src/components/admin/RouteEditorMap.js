@@ -28,12 +28,12 @@ const createNumberIcon = (number, isActive) => {
     html: `
       <div class="relative flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm shadow-xl border-2 transition-all duration-300 ${
         isActive 
-          ? 'bg-blue-500 text-white border-white scale-110 ring-4 ring-blue-500/30' 
-          : 'bg-[#1e1e30] text-blue-400 border-blue-500/50 hover:bg-blue-900/40 hover:scale-105'
+          ? 'bg-primary-500 text-white border-white scale-110 ring-4 ring-primary-500/30' 
+          : 'bg-[#1e1e30] text-primary-400 border-primary-500/50 hover:bg-primary-900/40 hover:scale-105'
       }">
         ${number}
         <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rotate-45 border-r border-b ${
-          isActive ? 'bg-blue-500 border-white' : 'bg-[#1e1e30] border-blue-500/50'
+          isActive ? 'bg-primary-500 border-white' : 'bg-[#1e1e30] border-primary-500/50'
         }"></div>
       </div>
     `,
@@ -675,7 +675,7 @@ export default function RouteEditorMap() {
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-[9px] text-blue-400 font-black uppercase tracking-widest leading-none">
+              <span className="text-[9px] text-primary-400 font-black uppercase tracking-widest leading-none">
                 ADMIN PANEL 後台管理端
               </span>
               <h1 className="text-xl font-black text-white mt-1 tracking-wide flex items-center gap-2">
@@ -701,7 +701,7 @@ export default function RouteEditorMap() {
                 value={routeName} 
                 onChange={(e) => setRouteName(e.target.value)}
                 placeholder="例如：大埔林村河文史路線"
-                className="w-full bg-slate-900/60 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/25 transition-all shadow-inner"
+                className="w-full bg-slate-900/60 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500/25 transition-all shadow-inner"
               />
             </div>
             <div>
@@ -713,14 +713,14 @@ export default function RouteEditorMap() {
                 onChange={(e) => setRouteDescription(e.target.value)}
                 placeholder="輸入關於整條路線的概括介紹..."
                 rows="2"
-                className="w-full bg-slate-900/60 border border-white/10 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/25 transition-all resize-none shadow-inner animate-pulse-subtle"
+                className="w-full bg-slate-900/60 border border-white/10 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500/25 transition-all resize-none shadow-inner animate-pulse-subtle"
               />
             </div>
             
             {/* Publish Toggle Button */}
-            <div className="flex items-center justify-between bg-blue-500/10 border border-blue-500/20 rounded-xl px-3 py-2.5 mt-1 transition-all shadow-md">
+            <div className="flex items-center justify-between bg-primary-500/10 border border-primary-500/20 rounded-xl px-3 py-2.5 mt-1 transition-all shadow-md">
               <div className="flex flex-col pr-2">
-                <span className="text-xs font-bold text-blue-200 flex items-center gap-1.5">
+                <span className="text-xs font-bold text-primary-200 flex items-center gap-1.5">
                   📢 發布至前台地圖
                 </span>
                 <span className="text-[9px] text-slate-400 leading-tight">
@@ -734,7 +734,7 @@ export default function RouteEditorMap() {
                   onChange={(e) => setPublished(e.target.checked)}
                   className="sr-only peer"
                 />
-                <div className="w-8 h-4.5 bg-slate-800 rounded-full peer peer-focus:ring-1 peer-focus:ring-blue-500/50 peer-checked:after:translate-x-3.5 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2.5px] after:left-[2.5px] after:bg-slate-400 after:border-slate-400 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-blue-500 peer-checked:after:bg-white peer-checked:after:border-white"></div>
+                <div className="w-8 h-4.5 bg-slate-800 rounded-full peer peer-focus:ring-1 peer-focus:ring-primary-500/50 peer-checked:after:translate-x-3.5 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2.5px] after:left-[2.5px] after:bg-slate-400 after:border-slate-400 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-primary-500 peer-checked:after:bg-white peer-checked:after:border-white"></div>
               </label>
             </div>
             
@@ -749,7 +749,7 @@ export default function RouteEditorMap() {
                   value={loadDocId} 
                   onChange={(e) => setLoadDocId(e.target.value)}
                   placeholder="輸入 Document ID (例如: taipo_history_route)"
-                  className="flex-1 bg-slate-950/80 border border-white/10 rounded-xl px-2.5 py-1.5 text-white text-[10px] focus:outline-none focus:border-blue-500 placeholder-slate-600 transition-all font-mono"
+                  className="flex-1 bg-slate-950/80 border border-white/10 rounded-xl px-2.5 py-1.5 text-white text-[10px] focus:outline-none focus:border-primary-500 placeholder-slate-600 transition-all font-mono"
                 />
                 <button
                   onClick={() => handleLoadFromFirestore(loadDocId)}
@@ -757,7 +757,7 @@ export default function RouteEditorMap() {
                   className={`px-3 py-1.5 rounded-xl text-[9px] font-bold transition-all border ${
                     !loadDocId
                       ? 'bg-white/5 border-white/5 text-slate-600 cursor-not-allowed'
-                      : 'bg-blue-600 border-blue-500 text-white hover:bg-blue-500 shadow-md shadow-blue-500/10 hover:shadow-blue-500/20 active:scale-95'
+                      : 'bg-primary-600 border-primary-500 text-white hover:bg-primary-500 shadow-md shadow-primary-500/10 hover:shadow-primary-500/20 active:scale-95'
                   }`}
                 >
                   載入
@@ -783,7 +783,7 @@ export default function RouteEditorMap() {
                   onClick={() => setGlobalRoutingMode(mode.id)}
                   className={`py-2 px-1 rounded-xl text-[10px] font-bold transition-all border ${
                     globalRoutingMode === mode.id
-                      ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/20'
+                      ? 'bg-primary-600 border-primary-500 text-white shadow-lg shadow-primary-500/20'
                       : 'bg-slate-950/60 border-white/5 text-slate-400 hover:bg-slate-800'
                   }`}
                   title={mode.desc}
@@ -825,7 +825,7 @@ export default function RouteEditorMap() {
             <button
               onClick={() => { setActiveTab("pois"); setActiveSegmentIdxForManualDrawing(null); }}
               className={`flex-1 pb-2.5 font-bold text-xs transition-colors border-b-2 text-center ${
-                activeTab === "pois" ? 'border-blue-500 text-white' : 'border-transparent text-slate-400 hover:text-slate-200'
+                activeTab === "pois" ? 'border-primary-500 text-white' : 'border-transparent text-slate-400 hover:text-slate-200'
               }`}
             >
               📍 景點設定 ({waypoints.length})
@@ -833,7 +833,7 @@ export default function RouteEditorMap() {
             <button
               onClick={() => setActiveTab("routing")}
               className={`flex-1 pb-2.5 font-bold text-xs transition-colors border-b-2 text-center ${
-                activeTab === "routing" ? 'border-blue-500 text-white' : 'border-transparent text-slate-400 hover:text-slate-200'
+                activeTab === "routing" ? 'border-primary-500 text-white' : 'border-transparent text-slate-400 hover:text-slate-200'
               }`}
             >
               🛣️ 交通與分段路徑 ({segmentsPath.length})
@@ -867,7 +867,7 @@ export default function RouteEditorMap() {
                         }}
                         className={`flex items-center justify-between p-2 rounded-xl text-xs cursor-pointer border transition-all ${
                           activeWaypointId === wp.id
-                            ? 'bg-blue-600/20 border-blue-500/50 text-white font-bold ring-2 ring-blue-500/10'
+                            ? 'bg-primary-600/20 border-primary-500/50 text-white font-bold ring-2 ring-primary-500/10'
                             : 'bg-white/[0.01] border-white/5 text-slate-300 hover:bg-white/5'
                         }`}
                       >
@@ -897,7 +897,7 @@ export default function RouteEditorMap() {
                 <div className="bg-gradient-to-b from-[#16162a] to-[#121222] p-4 rounded-2xl border border-white/10 shadow-xl space-y-3.5 animate-fade-in">
                   <div className="flex justify-between items-center border-b border-white/5 pb-2">
                     <h3 className="font-black text-white text-xs flex items-center gap-2">
-                      <span className="w-5 h-5 rounded-full bg-blue-600 text-white text-[9px] flex items-center justify-center font-bold">
+                      <span className="w-5 h-5 rounded-full bg-primary-600 text-white text-[9px] flex items-center justify-center font-bold">
                         {waypoints.findIndex(wp => wp.id === activeWaypoint.id) + 1}
                       </span>
                       景點細節編輯
@@ -919,7 +919,7 @@ export default function RouteEditorMap() {
                         type="text" 
                         value={activeWaypoint.name}
                         onChange={(e) => updateWaypoint(activeWaypoint.id, 'name', e.target.value)}
-                        className="w-full bg-slate-950/80 border border-white/10 rounded-xl px-3 py-1.5 text-white focus:outline-none focus:border-blue-500 text-xs transition-all"
+                        className="w-full bg-slate-950/80 border border-white/10 rounded-xl px-3 py-1.5 text-white focus:outline-none focus:border-primary-500 text-xs transition-all"
                       />
                     </div>
                     <div>
@@ -930,7 +930,7 @@ export default function RouteEditorMap() {
                         value={activeWaypoint.description}
                         onChange={(e) => updateWaypoint(activeWaypoint.id, 'description', e.target.value)}
                         rows="3"
-                        className="w-full bg-slate-950/80 border border-white/10 rounded-xl px-3 py-1.5 text-white focus:outline-none focus:border-blue-500 text-[11px] transition-all resize-none leading-relaxed"
+                        className="w-full bg-slate-950/80 border border-white/10 rounded-xl px-3 py-1.5 text-white focus:outline-none focus:border-primary-500 text-[11px] transition-all resize-none leading-relaxed"
                       />
                     </div>
                     
@@ -1021,7 +1021,7 @@ export default function RouteEditorMap() {
                                 onClick={() => handleSegmentProfileChange(idx, opt.id)}
                                 className={`py-1 rounded text-[9px] font-semibold transition-all ${
                                   profile === opt.id
-                                    ? 'bg-blue-600 text-white shadow-md'
+                                    ? 'bg-primary-600 text-white shadow-md'
                                     : 'bg-slate-900 text-slate-400 hover:bg-slate-800'
                                 }`}
                               >
@@ -1069,7 +1069,7 @@ export default function RouteEditorMap() {
               onClick={() => { setIsDrawMode(true); setActiveSegmentIdxForManualDrawing(null); }}
               className={`flex-1 py-2 rounded-lg font-bold text-[10px] tracking-wide transition-all ${
                 isDrawMode && activeSegmentIdxForManualDrawing === null
-                  ? 'bg-blue-600 text-white shadow-md'
+                  ? 'bg-primary-600 text-white shadow-md'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
@@ -1091,8 +1091,8 @@ export default function RouteEditorMap() {
         {/* Action Panel Footer */}
         <div className="pt-6 border-t border-white/5 space-y-3 shrink-0">
           {isLoadingRoute && (
-            <div className="flex items-center justify-center gap-2 py-1 text-xs text-blue-400">
-              <div className="w-3.5 h-3.5 border-2 border-blue-400/20 border-t-blue-400 rounded-full animate-spin" />
+            <div className="flex items-center justify-center gap-2 py-1 text-xs text-primary-400">
+              <div className="w-3.5 h-3.5 border-2 border-primary-400/20 border-t-primary-400 rounded-full animate-spin" />
               <span>資料載入中或路徑計算中...</span>
             </div>
           )}
@@ -1151,7 +1151,7 @@ export default function RouteEditorMap() {
             onClick={() => setBasemap("carto-light")}
             className={`px-3 py-1.5 rounded-lg text-[10px] font-black tracking-wider uppercase transition-all ${
               basemap === "carto-light"
-                ? 'bg-blue-600 text-white shadow-md'
+                ? 'bg-primary-600 text-white shadow-md'
                 : 'text-slate-400 hover:bg-white/5'
             }`}
           >
@@ -1161,7 +1161,7 @@ export default function RouteEditorMap() {
             onClick={() => setBasemap("osm")}
             className={`px-3 py-1.5 rounded-lg text-[10px] font-black tracking-wider uppercase transition-all ${
               basemap === "osm"
-                ? 'bg-blue-600 text-white shadow-md'
+                ? 'bg-primary-600 text-white shadow-md'
                 : 'text-slate-400 hover:bg-white/5'
             }`}
           >

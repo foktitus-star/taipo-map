@@ -1,14 +1,31 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary-50: #f0fdf4;
+  --color-primary-100: #dcfce7;
+  --color-primary-200: #bbf7d0;
+  --color-primary-300: #86efac;
+  --color-primary-400: #4ade80;
+  --color-primary-500: #3b8a60;
+  --color-primary-600: #2c704d;
+  --color-primary-700: #1e5036;
+  --color-primary-800: #166534;
+  --color-primary-900: #14532d;
+}
+
 /* ── Base reset ────────────────────────────────────────────── */
 :root {
-  --color-bg: #f4f8fa;
+  /* 小白鷺羽毛色系 (Egret White/Silver) */
+  --color-bg: #f8fafc;
   --color-surface: #ffffff;
-  --color-surface-2: #eaf3f8;
+  --color-surface-2: #f1f5f9;
   --color-text: #1e293b;
-  --color-accent: #0284c7;
-  --color-water: #0ea5e9;
-  --color-water-glow: rgba(14, 165, 233, 0.15);
+  /* 木棉樹 (Cotton Tree Red) */
+  --color-accent: #d94833;
+  /* 吐露港/林村河 (Tolo Harbour/Lam Tsuen River Teal) */
+  --color-water: #347b98;
+  --color-water-glow: rgba(52, 123, 152, 0.2);
+  
   --font-serif: "Noto Serif TC", "PMingLiU", "細明體", serif;
   --font-sans: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
   --font-scale: 1;
@@ -91,7 +108,7 @@ body {
   background: var(--color-surface) !important;
   color: var(--color-text) !important;
   border-radius: 20px !important;
-  border: 1px solid rgba(14, 165, 233, 0.2) !important;
+  border: 1px solid rgba(52, 123, 152, 0.2) !important;
   box-shadow:
     0 10px 40px rgba(0, 0, 0, 0.12),
     0 0 20px var(--color-water-glow) !important;
@@ -106,7 +123,7 @@ body {
   max-height: 70dvh;
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: rgba(14, 165, 233, 0.3) transparent;
+  scrollbar-color: rgba(52, 123, 152, 0.3) transparent;
 }
 
 @media (max-width: 480px) {
@@ -117,7 +134,7 @@ body {
 
 .leaflet-popup-tip {
   background: var(--color-surface) !important;
-  border: 1px solid rgba(14, 165, 233, 0.2) !important;
+  border: 1px solid rgba(52, 123, 152, 0.2) !important;
   box-shadow: none !important;
 }
 
@@ -168,7 +185,7 @@ body {
   font-weight: 600;
   line-height: 1.75;
   padding-bottom: 14px;
-  border-bottom: 1px solid rgba(14, 165, 233, 0.15);
+  border-bottom: 1px solid rgba(52, 123, 152, 0.15);
 }
 
 .popup-body {
@@ -191,7 +208,7 @@ body {
   border-radius: 14px;
   overflow: hidden;
   background: #f1f5f9;
-  border: 1px solid rgba(14, 165, 233, 0.1);
+  border: 1px solid rgba(52, 123, 152, 0.1);
 }
 
 .popup-img {
@@ -230,7 +247,7 @@ body {
   background: var(--color-surface) !important;
   color: var(--color-text) !important;
   border: none !important;
-  border-bottom: 1px solid rgba(14, 165, 233, 0.1) !important;
+  border-bottom: 1px solid rgba(52, 123, 152, 0.1) !important;
   width: 40px !important;
   height: 40px !important;
   line-height: 40px !important;
@@ -251,11 +268,11 @@ body {
   background: transparent;
 }
 .leaflet-popup-content::-webkit-scrollbar-thumb {
-  background: rgba(14, 165, 233, 0.25);
+  background: rgba(52, 123, 152, 0.25);
   border-radius: 4px;
 }
 .leaflet-popup-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(14, 165, 233, 0.4);
+  background: rgba(52, 123, 152, 0.4);
 }
 
 /* ── Attribution — minimal ─────────────────────────────────── */
@@ -268,5 +285,5 @@ body {
   backdrop-filter: blur(4px);
 }
 .leaflet-control-attribution a {
-  color: rgba(2, 132, 199, 0.7) !important;
+  color: rgba(52, 123, 152, 0.7) !important;
 }
